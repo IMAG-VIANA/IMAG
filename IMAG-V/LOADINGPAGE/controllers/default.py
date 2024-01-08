@@ -3,7 +3,6 @@ from flask import Flask, render_template,redirect,request,flash,session,abort,ur
 import json
 import requests as requests
 
-link = "https://imag-v-default-rtdb.firebaseio.com/"
 
 
 @IMAG.route('/home')
@@ -14,12 +13,12 @@ def home():
 @IMAG.route('/criar', methods=['POST', 'GET'])
 def criar():
     if request.method=='POST':
-        global nomecompleto, emailc, senhac, id_user,n
+        global nomecompleto, emailc, senhac, id_user,n,dic
         nomecompleto = request.form.get("nome").strip()
         emailc = request.form.get("email")
         senhac = request.form.get("passe")
         n = nomecompleto.split()
-        requisicaog = requests.get(f"{link}/IMAG/ENTIDADES/.json")
+        requisicaog = requests.get(f"{config['databaseURL']}/IMAG/ENTIDADES/.json")
         dic = requisicaog.json()
         for entidade in dic:
             # print(entidade)
@@ -37,15 +36,26 @@ def criar():
                 }
             }
             user = auth.create_user_with_email_and_password(emailc, senhac)
-            requisicaop = requests.post(f"{link}/IMAG/ENTIDADES/ALUNO/.json", data=json.dumps(dados))
+            requisicaop = requests.post(f"{config['databaseURL']}/IMAG/ENTIDADES/ALUNO/.json", data=json.dumps(dados))
             session['user']=emailc
             return abort(404,erro)
         except:
-            return redirect(f'/app/aluno/{n[0]}{n[len(n) - 1]}')
+            return redirect('/perguntas')
     return render_template('criar.html')
 
 @IMAG.route('/perguntas')
 def pergunta():
+        if ('user' in session):
+            for entidade in dic:
+                # print(entidade)
+                for id in dic[entidade]:
+                    for info in dic[entidade][id]:
+                        info = dic[entidade][id]
+                        nomedicl = info['INFORMACAO PESSOAL']['NOME COMPLETO']
+                        emaildicl = info['INFORMACAO PESSOAL']['EMAIL']
+
+            n = nomedicl.split()
+        return redirect(f'/app/aluno/{n[0]}{n[len(n) - 1]}')
     return render_template('perguntas.html')
 
 @IMAG.route('/login', methods=['POST', 'GET'])
@@ -53,18 +63,27 @@ def login():
     # if ('user' in session):
     #      return f'online {session["user"]}'
     if request.method == 'POST':
-
         emaill=request.form.get('email-lg')
         senhal=request.form.get('passe-lg')
+        requisicaog = requests.get(f"{config['databaseURL']}/IMAG/ENTIDADES/.json")
+        dic = requisicaog.json()
 
+        for entidade in dic:
+            # print(entidade)
+            for id in dic[entidade]:
+                for info in dic[entidade][id]:
+                    info = dic[entidade][id]
+                    nomedicl = info['INFORMACAO PESSOAL']['NOME COMPLETO']
+                    emaildicl = info['INFORMACAO PESSOAL']['EMAIL']
 
+        n = nomedicl.split()
         try:
-             user = auth.sign_in_with_email_and_password(emaill, senhal)
-             session['user']=emaill
-             return redirect(f'/app/aluno/{n[0]}{n[len(n) - 1]}')
-
+            if emaill==emaildicl:
+                user = auth.sign_in_with_email_and_password(emaill, senhal)
+                session['user']=emaildicl
+                return abort(404, erro)
         except:
-            abort(403,'erro')
+                return redirect(f'/app/aluno/{n[0]}{n[len(n) - 1]}')
     return render_template('login.html')
 
 @IMAG.route('/logout')
@@ -77,9 +96,13 @@ def logout():
 def app(entidade,user):
     e=entidade.lower()
     user=user.lower()
-
+    requisicaog = requests.get(f"{config['databaseURL']}/IMAG/ENTIDADES/.json")
+    dic = requisicaog.json()
     if ('user' in session):
-        return render_template('appentidades.html', entidade=e, user=user, id=id)
+        if user in dic:
+            return render_template('appentidades.html', entidade=e, user=user, id=id)
+        else:
+            abort(404,'erro')
     if not('user' in session):
         return  """
         <style>

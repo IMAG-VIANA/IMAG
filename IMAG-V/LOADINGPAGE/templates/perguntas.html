@@ -8,39 +8,27 @@
     <title>IMAG | PERGUNTAS</title>
 </head>
 <body>
-<img src="../static/image/back.png" alt="foto de fundo">
+<div id="container">
+    <h1>Qual é o seu perfil?</h1>
+    <ul>
+        <li><a id="aluno" href="#">Aluno</a></li>
+        <li><a id="professor" href="#">Professor</a></li>
+        <li><a id="director" href="#">Director Geral</a></li>
+        <li><a id="secretaria" href="#">Secretária</a></li>
+        <li><a id="funcionariodalimpeza" href="#">Funcionário da limpeza</a></li>
+        <li><a id="funcionariodaseguranca" href="#">Funcionário da segurança</a></li>
+        <li><a id="coord-peda" href="#">Coordenador Pedagógico</a></li>
+        <li><a id="super-peda" href="#">Supervisor Pedagógico</a></li>
+        <li><a id="orien" href="#">Orientador</a></li>
 
-<form action="/perguntas" method="POST">
-    <h1> Bem vindo ao IMAG</h1>
-  <div>
+    </ul>
+</div>
+<img id="fundo" src="../static/image/back.png" alt="foto de fundo">
 
-        <select  id="perguntas">
 
-                <option id="aluno" name="aluno">
-                   Aluno
-                </option>
 
-                  <option id="prof" name="prof">
-                        Professor
-                  </option>
-                  <option value="secretaria" id="sec" name="sec">
-                        Secretaria
-                  </option>
-                  <option onclick="director()" onclick="director()" value="director" id="dir" name="dir">
-                        Director
-                  </option>
-                  <option value="funcionariodalimpeza"id="f-l" name="f-l">
-                        Funcionário da limpeza
-                  </option>
-                  <option value="funcionariodaseguranca" id="f-s" name="f-s">
-                        Funcionário da segurança
 
-                  </option>
-        </select>
 
-  </div>
-</form>
-<script type="text/javascript" src="../static/javascript/pergunta.js"></script>
-
+<script src="../static/javascript/perguntas.js"></script>
 </body>
 </html>
